@@ -45,7 +45,7 @@ class MusicAnalyser():
         feature_index = 0
         for column in history_df.columns[:9]:
             q_bin = [i*max_val[feature_index]/4 for i in range(5)]
-            temp = pd.cut(histoy_df[column], bins=q_bin, labels=["Q1","Q2","Q3","Q4"])
+            temp = pd.cut(history_df[column], bins=q_bin, labels=["Q1","Q2","Q3","Q4"])
             for new_column in [prefix+"_"+column for prefix in ["Q1","Q2","Q3","Q4"]]:
                 pp_history[new_column] = (temp.iloc[:,0]==new_column.split("_")[0]).astype("int")
         pp_history["artist"] = history_df["artist"]
