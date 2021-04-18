@@ -65,10 +65,11 @@ for song in song_list:
     track_id = track['id']
     features = sp.get_audio_features([track_id])
     for i in range(len(features)):
-        temp = [track_id, song]
+        temp = []
         temp.extend([features[i][key] for key in sp.keys])
+        temp.extend([track_id, song])
         sp.embeddings.append(temp)
 
-df = pd.DataFrame(sp.embeddings, columns = ["track_id","track_name","danceability","energy","loudness","speechiness",
-                     "acousticness","instrumentalness","liveness","valence","tempo"])
-df.to_csv("Song features.csv")
+df = pd.DataFrame(sp.embeddings, columns = ["danceability","energy","loudness","speechiness",
+                     "acousticness","instrumentalness","liveness","valence","tempo","track_id","track_name"])
+df.to_csv("SongFeatures.csv")
