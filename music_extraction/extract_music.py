@@ -20,13 +20,12 @@ class SpotifyClient():
         # data containers
         with open(config_path) as f:
             self.config = json.load(f)
-        self.track_ids = []
-        self.embeddings = []
-        self.track_names = []
-        self.order_list = []
-        self.cm_playlist_id = -1 # last completed playlist id
-        self.keys = ["danceability","energy","loudness","speechiness",
-                     "acousticness","instrumentalness","liveness","valence","tempo"]
+        # self.track_ids = []
+        # self.embeddings = []
+        # self.track_names = []
+        # self.order_list = []
+        # self.cm_playlist_id = -1 # last completed playlist id
+        self.keys = self.config["keys"]
         
         # client setup
         self.client_credentials_manager = SpotifyClientCredentials(client_id=self.config["client_id"], 
@@ -35,7 +34,7 @@ class SpotifyClient():
     
 
 
-    def get_track_by_name(self, track_name, n_count=10):
+    def get_track_by_name(self, track_name, n_count=2):
             """
                 Returns list of tracks.
                 Each track is a dictionary
@@ -55,21 +54,14 @@ class SpotifyClient():
         """
         return self.sp.audio_features(track_ids)
     
-config_path = "config.json" #"YOUR CONFIG PATH"
-
-sp = SpotifyClient(config_path)
-
-song_list = ["Levitating", "perfect", "cross me"]
-for song in song_list:
-    track = sp.get_track_by_name(song)['items'][0]
-    track_id = track['id']
-    features = sp.get_audio_features([track_id])
-    for i in range(len(features)):
-        temp = []
-        temp.extend([features[i][key] for key in sp.keys])
-        temp.extend([track_id, song])
-        sp.embeddings.append(temp)
-
-df = pd.DataFrame(sp.embeddings, columns = ["danceability","energy","loudness","speechiness",
-                     "acousticness","instrumentalness","liveness","valence","tempo","track_id","track_name"])
-df.to_csv("SongFeatures.csv")
+    def make_df(self):
+        df_list = []
+        for track_name, rating in self.config["songs"]:
+            track = self.get_track_by_name(track_name)['items'][0]
+            track_id = track['id']
+            temp = [track_id, track_name, rating]
+            features = self.get_audio_features([track_id])[0]
+            temp = [features[key] for key in self.keys] + temp
+            df_list.append(temp)
+        df = pd.DataFrame(df_list, columns = self.keys+["track_id", "track_name", "rating"])
+        return df 
