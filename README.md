@@ -19,4 +19,4 @@ Use run function under runner.Runner module to realise your music taste.
 Use run_tests function under runner.Runner module to find worth of playlists.
 args: previously computed partworths, list of playlists (playlist - list of track names)
 
-Check #usage in runner.Runner module for further instructions.
+Check ***#usage*** in runner.Runner module for further instructions.
