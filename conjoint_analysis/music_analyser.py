@@ -24,6 +24,22 @@ class MusicAnalyser():
                      "acousticness","instrumentalness","liveness","valence","tempo","rating","artist","track"]
         return history_df
     
+    def bin_df(self, history_df):
+        """
+            Returns binned history dataframe.
+        """
+        max_val = self.config["max_val"]
+        min_val = self.config["min_val"]
+        history_df = history_df[self.config["keys"]]
+        feature_index = 0
+        key_len = len(self.config["keys"])
+        for column in history_df.columns[:key_len]:
+            q_bin = [min_val[feature_index]+i*(max_val[feature_index]-min_val[feature_index])/4-0.001 for i in range(5)]
+            temp = pd.cut(history_df[column], bins=q_bin, labels=["Q1","Q2","Q3","Q4"])
+            history_df[column] = temp
+            feature_index+=1
+        return history_df
+    
     def preprocess_history(self, history_df):
         """
             Pre-process user's music history/search space dataframe to a form suitable for conjoint analysis.
