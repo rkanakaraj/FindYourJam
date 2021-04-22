@@ -37,8 +37,13 @@ class Runner:
         heatmap = sns.heatmap(history_df.corr(), mask=mask, vmin=-1, vmax=1, annot=True, cmap='BrBG')
         plt.show()
         
-    def plot_pw_df(self, pw_df):
+    def plot_analysis(self, pw, ai, ri):
         pass
+    
+    #TODO: rashmi
+    def plot_test(self, history_df, pw_df):
+        pass
+    ###
     
     def run(self):
         history = self.extracter.load_user_history()
@@ -51,8 +56,9 @@ class Runner:
         
     def check(self, part_worths, song_list):
         history_df = self.extracter.make_history(song_list)
-        return self.analyser.process_song_df(part_worths.values[0], history_df)
-        
+        pw_df = self.analyser.process_song_df(part_worths.values[0], history_df)
+        self.plot_test(history_df, pw_df) 
+        return pw_df
         
 test1 = ["Sacrifice", "We're Good", "Prisoner", "Girls like you"]
         
