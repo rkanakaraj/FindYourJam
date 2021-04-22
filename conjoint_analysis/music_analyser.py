@@ -34,21 +34,16 @@ class MusicAnalyser():
             pp_history["rating"] = history_df["rating"]
         except:
             pass
-        #TODO: get this data from extracter, data regarding max value for a feature, for quartile binning
         max_val = self.config["max_val"]
         min_val = self.config["min_val"]
+        
         feature_index = 0
         key_len = len(self.config["keys"])
         for column in history_df.columns[:key_len]:
             q_bin = [min_val[feature_index]+i*(max_val[feature_index]-min_val[feature_index])/4-0.001 for i in range(5)]
-            # print("bin ",column, [min_val[feature_index]+i*(max_val[feature_index]-min_val[feature_index])/4 for i in range(5)])
             temp = pd.cut(history_df[column], bins=q_bin, labels=["Q1","Q2","Q3","Q4"])
             for new_column in [prefix+"_"+column for prefix in ["Q1","Q2","Q3","Q4"]]:
-                # return temp
-                # print(temp)
-                # print(temp.iloc[:,:1])
-                # print(new_column.split("_")[0])
-                pp_history[new_column] = (temp.iloc[:]==new_column.split("_")[0]).astype("int")
+                pp_history[new_column] = (temp==new_column.split("_")[0]).astype(int)
             feature_index+=1
         pp_history["track_id"] = history_df["track_id"]
         pp_history["track_name"] = history_df["track_name"]
@@ -57,11 +52,18 @@ class MusicAnalyser():
     def conjoint_analysis(self, df):
         """
             find partworth vector based on user data.
+            - attribute
+                -level
+                -level
+                -level
+            - attribute
+                -level
+                -level
         """
         
         df = df.drop(["track_id","track_name"],1)
         
-        # STEP 1: multiple ratings/scores with columns
+        # STEP 1: multiply ratings/scores with columns
         for column in df.columns[1:]:
             # print(column)
             df[column] = df[column]*df["rating"]
@@ -83,12 +85,25 @@ class MusicAnalyser():
             if col_ind%4 == 0:
                 bin_ind += 1
             part_worth[column] = average[column] - average.iloc[0,bin_ind*4:bin_ind*4+4].mean()
-            # print("bin: ",bin_ind*4,bin_ind*4+4)
-            # print(average.iloc[0,bin_ind*4:bin_ind*4+4].mean())
             col_ind += 1
         pw_vector = part_worth.values[0]
+        # part_worth = pd.DataFrame([pw_vector], columns = df.columns)
         
-        return pw_vector
+        # STEP 4: find attribute importance
+        attribute_importance = []
+        bin_ind = 0
+        for attribute in self.config["keys"]:
+            _bin = pw_vector[bin_ind*4:bin_ind*4+4]
+            attribute_importance.append(_bin.max()-_bin.min())
+            bin_ind += 1
+        
+        # STEP 5: relative importance
+        relative_importance = np.array(attribute_importance)/np.sum(attribute_importance)*100
+        
+        attribute_importance = pd.DataFrame([attribute_importance], columns = self.config["keys"])
+        relative_importance = pd.DataFrame([relative_importance], columns = self.config["keys"])
+        
+        return part_worth, attribute_importance, relative_importance
     
     def process_song_df(self, pw_vector, song_df):
         """
@@ -96,8 +111,10 @@ class MusicAnalyser():
         """
         part_worth = []
         pp_df = self.preprocess_history(song_df)
-        for song in pp_df.drop(["track_id","track_name","rating"],1).values:
+        for song in pp_df.drop(["track_id","track_name"],1).values:
             part_worth.append(sum(pw_vector*song))
         pp_df["part_worth"] = part_worth
-        return pp_df.sort_values(by=["part_worth"])
+        if "rating" in pp_df.columns:
+            pp_df = pp_df.drop(["rating"],1)
+        return pp_df.sort_values(by=["part_worth"], ascending=False)
         

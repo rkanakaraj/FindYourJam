@@ -54,7 +54,25 @@ class SpotifyClient():
         """
         return self.sp.audio_features(track_ids)
     
-    def make_df(self):
+    def load_user_songs(self):
+        return [i[0] for i in self.config["songs"]]
+    
+    def load_user_rating_map(self):
+        return self.config["songs"]
+    
+    def make_history(self, song_list):
+        df_list = []
+        for track_name in song_list:
+            track = self.get_track_by_name(track_name)['items'][0]
+            track_id = track['id']
+            temp = [track_id, track_name]
+            features = self.get_audio_features([track_id])[0]
+            temp = [features[key] for key in self.keys] + temp
+            df_list.append(temp)
+        df = pd.DataFrame(df_list, columns = self.keys+["track_id", "track_name"])
+        return df 
+    
+    def load_user_history(self):
         df_list = []
         for track_name, rating in self.config["songs"]:
             track = self.get_track_by_name(track_name)['items'][0]
