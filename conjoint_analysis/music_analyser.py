@@ -129,8 +129,8 @@ class MusicAnalyser():
         pp_df = self.preprocess_history(song_df)
         for song in pp_df.drop(["track_id","track_name"],1).values:
             part_worth.append(sum(pw_vector*song))
-        pp_df["part_worth"] = part_worth
+        pp_df["worth"] = part_worth
         if "rating" in pp_df.columns:
             pp_df = pp_df.drop(["rating"],1)
-        return pp_df.sort_values(by=["part_worth"], ascending=False)
+        return pp_df.sort_values(by=["worth"], ascending=False)
         
