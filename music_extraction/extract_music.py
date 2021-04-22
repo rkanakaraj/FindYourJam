@@ -12,9 +12,6 @@ class SpotifyClient():
         
         To create client_id and client_secret follow the link given below:
         https://developer.spotify.com/documentation/general/guides/app-settings/
-        
-        To download Spotify's Million Playlist dataset follow the link below:
-        https://www.aicrowd.com/challenges/spotify-million-playlist-dataset-challenge/
     """
     def __init__(self, config_path):
         # data containers
