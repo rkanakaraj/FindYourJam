@@ -1,10 +1,12 @@
 {
     "client_id": "f3e2df900446431cba1e8f62ebb81b49",
     "client_secret": "dc7de563aa2d4750aca21915f5c1b530",
+    
     "keys": ["danceability","energy","loudness","speechiness",
                      "acousticness","instrumentalness","liveness","valence","tempo"],
     "max_val": [1, 1,  20, 1, 1, 1, 1, 1, 200],
     "min_val": [0, 0, -20, 0, 0, 0, 0, 0, 0],
+    
     "songs": [["Levitating",10], ["perfect",10], ["cross me",8], ["dear god",8], ["lets link", 9],
     ["hey boy",7], ["you to you",3], ["easier",2], ["best friend", 1], ["boombayah",10],
     ["billie jean",10], ["bad",9], ["smooth criminal",9],["around the world", 9], 

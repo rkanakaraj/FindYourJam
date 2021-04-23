@@ -122,7 +122,7 @@ playlists = [["Sacrifice", "We're Good", "Prisoner", "Girls like you", "anywhere
 
 #usage
 r = Runner()
-history, pp_history, part_worths, relative_importance = r.run() # user's liked songs are processed
+history, pp_history, part_worths, relative_importance = r.run() # user's songs are processed
 _ = r.find_worth_playlists(part_worths, playlists) # worth of playlists according to the user
-
+print(worth)
         

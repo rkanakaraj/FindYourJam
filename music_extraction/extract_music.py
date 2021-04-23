@@ -14,14 +14,8 @@ class SpotifyClient():
         https://developer.spotify.com/documentation/general/guides/app-settings/
     """
     def __init__(self, config_path):
-        # data containers
         with open(config_path) as f:
             self.config = json.load(f)
-        # self.track_ids = []
-        # self.embeddings = []
-        # self.track_names = []
-        # self.order_list = []
-        # self.cm_playlist_id = -1 # last completed playlist id
         self.keys = self.config["keys"]
         
         # client setup
