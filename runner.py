@@ -16,7 +16,6 @@ class Runner:
         """
             basic data exploration
         """
-        
         print("\n\n*************************\n\
               Exploring User's liked songs\n*************************")
         # data spread
@@ -42,6 +41,9 @@ class Runner:
         plt.show()
         
     def plot_analysis(self, pw, ri):
+        """
+            plot the results of conjoint analysis
+        """
         print("\n\n*************************\n\
               Analysing User's liked songs\n*************************")
         attributes = sum([[i]*4 for i in ri.columns],[])
@@ -77,6 +79,9 @@ class Runner:
     
     
     def run(self):
+        """
+            run full process on user's liked songs.
+        """
         history = self.extracter.load_user_history()
         self.plot_history(history)
         
@@ -86,18 +91,24 @@ class Runner:
         
         return history, pp_history, part_worths, relative_importance
         
-    def check(self, part_worths, song_list):
+    def find_worth_playlist(self, part_worths, song_list):
+        """
+            Find the worth of a songs in a playlist
+        """
         history_df = self.extracter.make_history(song_list)
         u_df = self.analyser.process_song_df(part_worths.values[0], history_df)
         return u_df
     
-    def run_tests(self, part_worths, song_lists):
+    def find_worth_playlists(self, part_worths, song_lists):
+        """
+            Find the worth of playlists
+        """
         print("\n\n*************************\n\
               Checking Worth of playlist\n*************************")
         worth_list = []
         # index = 0
         for song_list in song_lists:
-            worth = self.check(part_worths, song_list)
+            worth = self.find_worth_playlist(part_worths, song_list)
             self.plot_test(worth)
             worth_list.append(worth["worth"].mean()) #TODO: mean or sum?
             # index += 1
@@ -110,8 +121,8 @@ playlists = [["Sacrifice", "We're Good", "Prisoner", "Girls like you", "anywhere
              ["nails, hair, hips, heels", "soulmate", "peaches"]]
 
 #usage
-# r = Runner()
-# history, pp_history, part_worths, relative_importance = r.run() # user's liked songs are processed
-# _ = r.run_tests(part_worths, playlists) # worth of playlists according to the user
+r = Runner()
+history, pp_history, part_worths, relative_importance = r.run() # user's liked songs are processed
+_ = r.find_worth_playlists(part_worths, playlists) # worth of playlists according to the user
 
         
